@@ -20,14 +20,20 @@ public class UDPReceiver {
 
 	         // Construct the socket
 	         DatagramSocket socket = new DatagramSocket( port ) ;
-
+		 DatagramSocket ACK_socket = new DatagramSocket( port ) ;
 	         for( ;; )
 	         {
 		        System.out.println( "Receiving on port " + port ) ;
 		        DatagramPacket packet = new DatagramPacket( new byte[PACKETSIZE], PACKETSIZE ) ;
 	            socket.receive( packet ) ;
 
-	            System.out.println( packet.getAddress() + " " + packet.getPort() + ": " + new String(packet.getData()).trim() ) ;
+			String message = new String(packet.getData()).trim() ;
+			
+	                System.out.println( packet.getAddress() + " " + packet.getPort() + ": " + message ) ;
+			message = "ACK: " + message;
+			byte [] data = message.getBytes();
+			packet = new DatagramPacket( data, data.length, packet.getAddress(), port+1 ) ;
+		        send_socket.send( packet );
 	        }  
 	     }
 	     catch( Exception e )
